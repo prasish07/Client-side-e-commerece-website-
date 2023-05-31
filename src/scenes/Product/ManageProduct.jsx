@@ -12,7 +12,9 @@ const ManageProduct = () => {
 
   const fetchData = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const { data } = await axios.get("api/v1/products");
+    const { data } = await axios.get(
+      "https://e-commerece-server.onrender.com/api/v1/products"
+    );
     setProducts(data.products);
     setLoading(false);
   };
