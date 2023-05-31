@@ -46,7 +46,8 @@ const Review = ({ id }) => {
     try {
       const post = await axios.post(
         "https://e-commerece-server.onrender.com/api/v1/review",
-        value
+        value,
+        { withCredentials: true }
       );
       console.log(post);
       dispatch(
