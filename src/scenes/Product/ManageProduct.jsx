@@ -25,7 +25,7 @@ const ManageProduct = () => {
         <h1 className="title center">Manage Product</h1>
         <button
           className="add_btn right"
-          onClick={() => navigate("/manage-product/add-product")}
+          onClick={() => navigate(`/manage-product/add-product`)}
         >
           Add
         </button>
