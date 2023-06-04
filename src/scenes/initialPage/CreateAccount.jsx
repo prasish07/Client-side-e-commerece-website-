@@ -27,7 +27,8 @@ const CreateAccount = () => {
     try {
       const { data } = await axios.post(
         `https://e-commerece-server.onrender.com/api/v1/auth/register`,
-        signupUser
+        signupUser,
+        { withCredentials: true }
       );
       console.log(data);
       if (data.success) {

@@ -6,6 +6,7 @@ import axios from "axios";
 import Popup from "../../componets/Popup";
 import { setPopup } from "../../state/user";
 import { useSelector, useDispatch } from "react-redux";
+import getCookie from "../../hooks/GetCookies";
 
 const AddProduct = () => {
   const dispatch = useDispatch();
@@ -26,9 +27,16 @@ const AddProduct = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("Image", file);
+    const token = getCookie("token");
     try {
       const { data } = await axios.post(
         "https://e-commerece-server.onrender.com/api/v1/users/uploadProfile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        },
         formData
       );
       if (data) {
@@ -39,6 +47,12 @@ const AddProduct = () => {
             {
               ...userEnterData,
               image: data.image.src,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              withCredentials: true,
             }
           );
           // setUpload(value.data);

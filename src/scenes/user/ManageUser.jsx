@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import User from "./User";
+import getCookie from "../../hooks/GetCookies";
 
 const ManageUser = () => {
   const navigate = useNavigate();
@@ -11,9 +12,16 @@ const ManageUser = () => {
 
   const fetchData = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    const token = getCookie("token");
+    console.log(token);
     const { data } = await axios.get(
       "https://e-commerece-server.onrender.com/api/v1/users",
-      { withCredentials: true }
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
     );
     setUsers(data.msg);
     setLoading(false);

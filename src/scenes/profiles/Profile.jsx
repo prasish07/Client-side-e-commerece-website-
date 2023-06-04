@@ -11,9 +11,11 @@ import Cookies from "js-cookie";
 import { useGlobalContext } from "../../utils/context";
 import "./profile.css";
 import FormRow from "../../componets/formRow";
+import getCookie from "../../hooks/GetCookies";
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const token = getCookie("token");
   let user = localStorage.getItem("user");
   user = JSON.parse(user);
   const [value, setValue] = useState({
@@ -40,6 +42,12 @@ const Profile = () => {
     formData.append("Image", file);
     const { data } = await axios.post(
       "https://e-commerece-server.onrender.com/api/v1/users/uploadProfile",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      },
       formData
     );
     console.log(data);
@@ -48,6 +56,12 @@ const Profile = () => {
         "https://e-commerece-server.onrender.com/api/v1/users/uploadUserv2",
         {
           image: data.image.src,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         }
       );
       setUpload(value.data);
@@ -69,6 +83,12 @@ const Profile = () => {
           name: value.name,
           email: value.email,
           aboutme: value.aboutme,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         }
       );
       console.log(data);
@@ -92,6 +112,12 @@ const Profile = () => {
         {
           oldPassword: value.password,
           newPassword: value["New-password"],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         }
       );
       console.log(data);
@@ -106,7 +132,13 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await axios.get(
-        `https://e-commerece-server.onrender.com/api/v1/users/${user._id}`
+        `https://e-commerece-server.onrender.com/api/v1/users/${user._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
 
       console.log("Uploaded");

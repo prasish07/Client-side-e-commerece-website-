@@ -7,6 +7,7 @@ import Popup from "../../componets/Popup";
 import { setPopup } from "../../state/user";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
+import getCookie from "../../hooks/GetCookies";
 
 const EditProduct = () => {
   const location = useLocation();
@@ -16,6 +17,8 @@ const EditProduct = () => {
   const id = searchId.get("id");
   const message = useSelector((state) => state.auth.message);
   const [product, setProduct] = useState(null);
+  const token = getCookie("token");
+  let data;
   const [userEnterData, setUserEnterData] = useState({
     name: "",
     price: "",
@@ -26,9 +29,14 @@ const EditProduct = () => {
   });
   const fetchProduct = async () => {
     try {
-      console.log(id);
       const value = await axios.get(
-        `https://e-commerece-server.onrender.com/api/v1/products/${id}`
+        `https://e-commerece-server.onrender.com/api/v1/products/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       console.log(value.data.product);
       setUserEnterData(value.data.product);
@@ -41,61 +49,73 @@ const EditProduct = () => {
     fetchProduct();
   }, []);
   const [file, setFile] = useState(null);
-  const [image, setImage] = useState(
-    "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg"
-  );
+  const [image, setImage] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("Image", file);
-    try {
-      const { data } = await axios.post(
-        "https://e-commerece-server.onrender.com/api/v1/users/uploadProfile",
-        formData
-      );
-      console.log(data);
-      if (data) {
-        console.log(userEnterData);
-        try {
-          const value = await axios.patch(
-            `https://e-commerece-server.onrender.com/api/v1/products/${id}`,
-            {
-              name: userEnterData.name,
-              price: userEnterData.price,
-              description: userEnterData.description,
-              category: userEnterData.category,
-              inventory: userEnterData.inventory,
-              colors: userEnterData.colors,
-            }
-          );
-          console.log();
-          // setUpload(value.data);
-          if (value.data) {
-            dispatch(
-              setPopup({
-                value: "true",
-                message: "Product is updated succesfully!!",
-              })
-            );
+    if (file !== null) {
+      const formData = new FormData();
+      formData.append("Image", file);
+      try {
+        const { data } = await axios.post(
+          "https://e-commerece-server.onrender.com/api/v1/users/uploadProfile",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
           }
-        } catch (error) {
-          console.log(error);
-          dispatch(
-            setPopup({
-              value: "true",
-              message: `Failed!!  (${error.response.data.msg})`,
-            })
-          );
+        );
+        setImage(data.image);
+      } catch (error) {
+        console.log(error);
+        dispatch(
+          setPopup({
+            value: "true",
+            message: `Image  (${error.response.data.msg})`,
+          })
+        );
+      }
+    }
+
+    try {
+      console.log(userEnterData);
+      const value = await axios.patch(
+        `https://e-commerece-server.onrender.com/api/v1/products/${id}`,
+        {
+          name: userEnterData.name,
+          price: userEnterData.price,
+          description: userEnterData.description,
+          category: userEnterData.category,
+          inventory: userEnterData.inventory,
+          colors: userEnterData.colors,
+          image: image && image,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         }
+      );
+      console.log();
+      // setUpload(value.data);
+      if (value.data) {
+        dispatch(
+          setPopup({
+            value: "true",
+            message: "Product is updated succesfully!!",
+          })
+        );
       }
     } catch (error) {
       console.log(error);
-      dispatch(
-        setPopup({
-          value: "true",
-          message: `Image  (${error.response.data.msg})`,
-        })
-      );
+      // dispatch(
+      //   setPopup({
+      //     value: "true",
+      //     message: `Failed!!  (${error.response.data.msg})`,
+      //   })
+      // );
     }
   };
 

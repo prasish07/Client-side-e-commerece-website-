@@ -5,7 +5,7 @@ import { IconButton } from "@mui/material";
 import axios from "axios";
 import Popup from "./Popup";
 import { useNavigate } from "react-router-dom";
-
+import getCookie from "../hooks/GetCookies";
 import { useSelector, useDispatch } from "react-redux";
 import { setPopup } from "../state/user";
 
@@ -13,10 +13,19 @@ const Product = ({ product }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const message = useSelector((state) => state.auth.message);
+  const token = getCookie("token");
 
   const handleDelete = async ({ _id, name }) => {
     try {
-      const { data } = await axios.delete(`/api/v1/products/${_id}`);
+      const { data } = await axios.delete(
+        `https://e-commerece-server.onrender.com/api/v1/products/${_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
       console.log(data.success);
       if (data.success) {
         dispatch(

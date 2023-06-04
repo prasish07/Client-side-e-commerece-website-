@@ -8,11 +8,13 @@ import FormRow from "../../componets/formRow";
 import Dropdown from "../../componets/Dropdown";
 import { setPopup } from "../../state/user";
 import Popup from "../../componets/Popup";
+import getCookie from "../../hooks/GetCookies";
 
 const Review = ({ id }) => {
   const dispatch = useDispatch();
   const [review, setReview] = useState(null);
   const [loading, setLoading] = useState(true);
+  const token = getCookie("token");
   const [value, setValue] = useState({
     comment: "",
     rating: 0,
@@ -24,7 +26,13 @@ const Review = ({ id }) => {
     console.log(id);
     try {
       const { data } = await axios.get(
-        `https://e-commerece-server.onrender.com/api/v1/products/${id}/review`
+        `https://e-commerece-server.onrender.com/api/v1/products/${id}/review`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       console.log(data.reviews);
       setReview(data.reviews);
@@ -47,7 +55,12 @@ const Review = ({ id }) => {
       const post = await axios.post(
         "https://e-commerece-server.onrender.com/api/v1/review",
         value,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       console.log(post);
       dispatch(
