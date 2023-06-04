@@ -73,7 +73,7 @@ const Navbar = () => {
     <Box
       display="flex"
       alignItems="center"
-      width="210vh"
+      width="100%"
       height="60px"
       backgroundColor="rgba(255,255,255,0.95)"
       color="black"
@@ -90,7 +90,10 @@ const Navbar = () => {
         alignItems="center"
       >
         <Box
-          fontSize="25px"
+          fontSize={{
+            xs: "14px", // small font size for mobile devices
+            md: "25px", // default font size for larger screens
+          }}
           onClick={() => navigate("/")}
           sx={{ "&:hover": { cursor: "pointer" } }}
           color={shades.secondary[500]}
